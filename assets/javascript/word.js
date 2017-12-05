@@ -12,6 +12,7 @@ function makeBlanks() {
     for (var i = 0; i < lettersInWord.length; i++) {
         letterBlanks.push("_");
     }
+    console.log("");
     console.log(letterBlanks.join(" "));
     console.log("");
 }
