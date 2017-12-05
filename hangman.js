@@ -1,126 +1,73 @@
+// PSEUDOCODE
+// ===============================================================================
+// New game
+// * Set number of guesses remaining to 10
+// * Randomly pick a word from array of choices
+// * Ask user to pick first letter
+
+// Confirm New Game
+// * Ask if they want to play again
+// * If yes,
+//   * New game
+// * Else
+//   * Exit
+
+// Guess Letter
+// * If guesses > 0
+//   * Ask the user to guess a letter
+//   * Expose letter in currentWord, if used
+//   * If word is completely exposed:
+//     * Tell user they win!
+//     * Confirm new game
+//   * Else
+//     * Decrement guesses by 1
+//     * Guess Letter
+// * Else
+//   * Confirm new game
+
+// GLOBAL VARIABLES
+// ===============================================================================
+
+// require inquirer package, letter and word files
 var inquirer = require('inquirer');
+var letter = require('./assets/javascript/letter.js');
+var word = require('./assets/javascript/word.js');
 
-var currentWord;
-var wordArr = ["apple", "orange", "banana", "pear"];
-var guessesLeft;
+// est global variables
+var guessesRemaining;
+var letterBlanks = [];
 
-gameStart();
+// computer picks a random word from an array
+var wordOptions = ["yellowstone", "yosemite", "grand canyon", "zion", "acadia", "arches", "glacier", "bryce canyon", "great smoky mountains", "denali", ];
+var currentWord = "";
+var lettersInWord = [];
+var numBlanks;
 
+// FUNCTIONS
+// ===============================================================================
 
-function gameStart() {
-    inquirer.prompt([{
-        type: "list",
-        name: "playGame",
-        message: "Would you like to play a new game of hangman?",
-        choices: ["Yes", "No"]
-    }]).then(function(user) {
-        if (user.playGame === "Yes") {
-            console.log("Alright, lets get started!");
-            newGame();
-        }
-        else {
-            console.log("Ok, maybe another time...");
-        }
-    });
+function startGame() {
+    guessesRemaining = 10;
 }
 
+// MAIN PROCESS
+// ===============================================================================
 
-function newGame() {
-    guessesLeft = 10;
-    currentWord = new Word(wordArr[Math.floor((Math.random() * wordArr.length))]);
-    guessLetter();
+startGame();
+// user begins game with 10 guesses
 
-}
+// blanks appear for each letter
 
-function guessLetter() {
-    if (guessesLeft > 0) {
-        inquirer.prompt([{
-            "message": "Guess a letter:",
-            "name": "letter"
-
-        }]).then(function(userInput) {
-            currentWord.exposeLetter(userInput.letter);
-            if (currentWord.isExposed()) {
-
-            }
-            else {
-                guessesLeft--;
-                guessLetter();
-            }
-        });
-
-    }
-    else {
-        gameStart();
-    }
-}
-
-function Word(value) {
-    this.lettersArr = [];
-
-    //looping through each letter of value (wordChoice) and pushing each index to lettersArr and assigning "value" as the "character" of "Letter"
-    for (var l = 0; l < value.length; l++) {
-        this.lettersArr.push(new Letter(value[l]));
-    }
-
-    // loop through characters pushed to lettersArr
-    //expose individual letters if character and letter match
-    this.exposeLetter = function(letter) {
-        for (var i = 0; i < this.lettersArr.length; i++) {
-            this.lettersArr[i].exposeIfMatches(letter);
-        }
-    };
-
-    //deciding if user won by looping through lettersArr and checking if all letters are exposed. if all are exposed, will return true, if not, it will keep looping
-    this.isExposed = function() {
-        for (var i = 0; i < this.lettersArr.length; i++) {
-            if (!this.lettersArr[i].exposed) {
-                return false;
-            }
-        }
-        console.log("YOU WIN!!!");
-        gameStart();
-        return true;
-
-    };
-
-
-}
-
-function Letter(character) {
-    this.exposed = false;
-    this.character = character;
-
-    //comparing two letters and deciding if it's gonna be exposed
-    this.exposeIfMatches = function(letter) {
-        console.log(character);
-        if (this.character === letter) {
-            this.exposed = true;
-        }
-        if (this.exposed === false) {
-            return "_";
-
-        }
-        // } else if (this.exposed === false) {
-        //     return "_"
-        // } else {
-        //     return this.character
-        // }
-
-
-
-
-
-        // for (var i = 0; i < character.length; i++) {
-        // console.log(character);
-        // if(this.character === letter) {
-        // this.exposed = true;
-        // } if (this.exposed === false) {
-        //     character = "_";
-        // }
-
-        // }
-
-
-    };
-}
+// user is asked to pick a letter
+inquirer.prompt([{
+    name: "guessALetter",
+    message: "Guess a letter!"
+}]).then(function(answers) {
+    console.log(answers);
+    guessesRemaining--;
+    console.log(guessesRemaining);
+});
+// user guesses a letter
+// blanks expose letters if the user's guess matches that letter
+// guesses decrement by 1 until there aren't any guesses remaining
+// if guesses = 0, user is asked if they would like to play again y/n?
